@@ -10,6 +10,10 @@ import org.aspectj.lang.annotation.Aspect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
+import org.springframework.web.context.request.ServletWebRequest;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.Optional;
@@ -45,20 +49,17 @@ public class LoggerAspect {
          */
     @After("execution(* board..controller.*Controller.*(..))")
     public void sessionLogPrint(JoinPoint joinPoint) throws Throwable {
-        HttpServletRequest req = null;
-        StringBuilder logPrint = new StringBuilder();
+        HttpServletRequest req = ((ServletRequestAttributes) RequestContextHolder
+                .getRequestAttributes()).getRequest();
 
-        for(Object o : joinPoint.getArgs()) {
-            if(o instanceof HttpServletRequest) {
-                req = (HttpServletRequest) o;
-                logPrint.append("sessionId : ")
-                        .append(req.getRequestedSessionId())
-                        .append(", userSession : ");
-            }
-        }
+        StringBuilder logPrint = new StringBuilder();
+        logPrint.append("sessionId : ")
+                .append(req.getRequestedSessionId())
+                .append(", userSession : ");
 
         Optional.ofNullable(req)
-                .map(o -> o.getSession().getAttribute("userSession"))
+                .map(o -> o.getSession())
+                .map(o -> o.getAttribute("userSession"))
                 .filter(o -> o instanceof UserSession)
                 .map(o -> (UserSession) o)
                 .ifPresentOrElse(user -> log.debug(String.valueOf(logPrint.append(user))),
