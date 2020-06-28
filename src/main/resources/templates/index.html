@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>index</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}"/>
+</head>
+<body>
+    <a href="/login.do">비로그인</a>
+    <a href="/login.do?id=hong123&&authority=00&&name=honggildong">일반사용자 로그인</a>
+    <a href="/login.do?id=gong123&&authority=01&&name=gonggildong">관리자 로그인</a>
+    <a href="/login.do?id=dong123&&authority=02&&name=donggildong">마스터 로그인</a>
+</body>
